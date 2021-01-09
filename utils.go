@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/larspensjo/config"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -47,28 +46,33 @@ func float2Int(input interface{}) interface{} {
 
 func getConfig(sec string) (map[string]string, error) {
 	targetConfig := make(map[string]string)
-	cfg, err := config.ReadDefault("config.ini")
-	if err != nil {
-		return targetConfig, NewServiceError("unable to open config file or wrong fomart")
-	}
-	sections := cfg.Sections()
-	if len(sections) == 0 {
-		return targetConfig, NewServiceError("no " + sec + " config")
-	}
-	for _, section := range sections {
-		if section != sec {
-			continue
-		}
-		sectionData, _ := cfg.SectionOptions(section)
-		for _, key := range sectionData {
-			value, err := cfg.String(section, key)
-			if err == nil {
-				targetConfig[key] = value
-			}
-		}
-		break
-	}
+	targetConfig = GetSectionMap(sec)
 	return targetConfig, nil
+	/*
+		cfg, err := config.ReadDefault("config.ini")
+		if err != nil {
+			return targetConfig, NewServiceError("unable to open config file or wrong fomart")
+		}
+		sections := cfg.Sections()
+		if len(sections) == 0 {
+			return targetConfig, NewServiceError("no " + sec + " config")
+		}
+		for _, section := range sections {
+			if section != sec {
+				continue
+			}
+			sectionData, _ := cfg.SectionOptions(section)
+			for _, key := range sectionData {
+				value, err := cfg.String(section, key)
+				if err == nil {
+					targetConfig[key] = value
+				}
+			}
+			break
+		}
+		return targetConfig, nil
+
+	*/
 }
 
 //SimpleHTTPPost simple post json func
